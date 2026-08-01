@@ -1,0 +1,38 @@
+[versions]
+agp = "8.9.1"
+android-compile-sdk = "36"
+android-min-sdk = "24"
+compose-multiplatform = "1.8.2"
+decompose = "3.2.0"
+dokka = "2.0.0"
+kotlin = "2.1.21"
+kotlinx-coroutines = "1.10.2"
+kotlinx-binary-compatibility-validator = "0.18.1"
+kover = "0.9.8"
+navigation2 = "2.9.0-beta03"
+voyager = "1.1.0-beta03"
+activity-compose = "1.10.1"
+vanniktech-maven-publish = "0.34.0"
+
+[libraries]
+decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
+decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
+kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
+navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "navigation2" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+compose-runtime-saveable = { module = "org.jetbrains.compose.runtime:runtime-saveable", version.ref = "compose-multiplatform" }
+compose-ui-backhandler = { module = "org.jetbrains.compose.ui:ui-backhandler", version.ref = "compose-multiplatform" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+compose-multiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+dokka = { id = "org.jetbrains.dokka", version.ref = "dokka" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+kotlinx-binary-compatibility-validator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-binary-compatibility-validator" }
+kover = { id = "org.jetbrains.kotlinx.kover", version.ref = "kover" }
+vanniktech-maven-publish = { id = "com.vanniktech.maven.publish", version.ref = "vanniktech-maven-publish" }

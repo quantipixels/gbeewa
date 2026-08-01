@@ -1,0 +1,28 @@
+public final class com/quantipixels/gbeewa/RememberResultAsStateKt {
+	public static final fun rememberResultAsState (Lcom/quantipixels/gbeewa/ResultKey;[Ljava/lang/Object;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
+	public static final fun rememberSaveableResultAsState (Lcom/quantipixels/gbeewa/ResultKey;[Ljava/lang/Object;Landroidx/compose/runtime/saveable/Saver;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
+	public static final fun rememberSaveableResultAsState (Lcom/quantipixels/gbeewa/ResultKey;[Ljava/lang/Object;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
+}
+
+public final class com/quantipixels/gbeewa/ResultConsumer {
+	public static final field $stable I
+	public fun <init> (Lcom/quantipixels/gbeewa/ResultStore;)V
+	public final fun consume (Lcom/quantipixels/gbeewa/ResultKey;Lkotlin/jvm/functions/Function1;)V
+	public final fun contains (Lcom/quantipixels/gbeewa/ResultKey;)Z
+}
+
+public final class com/quantipixels/gbeewa/ResultEffectKt {
+	public static final fun ResultEffect (Lcom/quantipixels/gbeewa/ResultKey;Lkotlin/jvm/functions/Function1;Landroidx/compose/runtime/Composer;I)V
+	public static final fun getLocalResultConsumer ()Landroidx/compose/runtime/ProvidableCompositionLocal;
+}
+
+public abstract interface class com/quantipixels/gbeewa/ResultKey {
+}
+
+public final class com/quantipixels/gbeewa/ResultStore {
+	public static final field $stable I
+	public fun <init> ()V
+	public final fun contains (Lcom/quantipixels/gbeewa/ResultKey;)Z
+	public final fun put (Lcom/quantipixels/gbeewa/ResultKey;Ljava/lang/Object;)V
+}
+
