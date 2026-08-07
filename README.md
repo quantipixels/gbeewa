@@ -10,9 +10,22 @@ Gbéewá is the library name. Its repository and artifact use `gbeewa`, and its 
 
 Gbéewá delivers typed, transient results to app-wired Compose Multiplatform consumers. It does not own navigation, identify a previous destination, or select a destination. A mounted consumer can receive a result on the same screen or after any navigation change while the shared result store remains alive.
 
+The library uses a common runtime API. It does not require KSP, code generation, or a navigation-framework compiler plugin.
+
 Quanti Pixels authors, maintains, and publishes this library. The library originated from the result mechanism in Yétúndé The Alárìná.
 
 Version `0.1.0` supports Android and iOS. Future platform targets are added by request.
+
+## Why Gbéewá
+
+- **Omni-directional delivery:** Deliver current-to-previous, current-to-next, or current-to-current. Shared store ownership, key equality, and consumption timing select the receiver.
+- **Typed result lanes:** Use `ResultKey<T>` instead of shared string keys and manual payload casts.
+- **Parameterized keys:** Use data-class keys to isolate concurrent requests or screen instances.
+- **Pure runtime API:** Add no KSP processor or generated navigation wrapper.
+- **Framework agnostic:** Use the same contract with Navigation 2, Navigation 3, Decompose, Voyager, or app-owned navigation.
+- **Compose Multiplatform:** Use the same common API on Android and iOS.
+
+Gbéewá provides transient, one-consumer result delivery. It is not a broadcast channel or a replacement for durable application state.
 
 ## Navigation direction
 
@@ -21,10 +34,21 @@ Version `0.1.0` supports Android and iOS. Future platform targets are added by r
 `ResultStore.put` stores one pending value under a key. It does not address a screen. The first eligible consumer that uses a `ResultConsumer` backed by the same store and an equal key consumes that value. Therefore, a publication can deliver in these directions:
 
 - current to previous: publish, then pop;
-- current to current: publish while the consumer remains mounted;
+- current to current: publish while the consumer remains mounted, including between sibling composables that share the store;
 - current to next: publish, then push a screen that consumes the key.
 
 Other route relationships use the same rules. Navigation direction does not select the receiver. Shared `ResultStore` ownership, key equality, and consumption timing select it. Delivery is not a broadcast. If more than one consumer can observe an equal key, only the first consumer receives the pending value. A mounted consumer can consume it before a later screen enters composition. Use request-specific or parameterized keys when the receiver must be unambiguous.
+
+```text
+Producer A ── put(ResultKey<T>, value) ──► ResultStore
+                                                │
+                              equal key + first eligible consumer
+                                                │
+                                                ▼
+                              Consumer B or a later destination
+```
+
+The producer and consumer can be on the same screen, on different mounted screens, or on screens separated by a navigation change. The diagram shows one-result consumption. It does not show a broadcast channel.
 
 ## Samples
 
@@ -220,6 +244,30 @@ class AppResultViewModel : ViewModel() {
 ```
 
 Provide `resultConsumer` through `LocalResultConsumer`. Capture `resultStore` in route callbacks, or pass it to producers when the application chooses direct exposure. A `ViewModel` preserves this in-memory owner across Android configuration changes. It does not restore pending results after process death.
+
+Apps that use Compose Runtime 1.10.0 or later can instead keep a composition-owned store with [`retain`](https://developer.android.com/reference/kotlin/androidx/compose/runtime/retain/retain.composable). Add the `androidx.compose.runtime:runtime-retain` artifact to the app, then retain the store at the application or navigation root:
+
+```kotlin
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.retain.retain
+import com.quantipixels.gbeewa.LocalResultConsumer
+import com.quantipixels.gbeewa.ResultConsumer
+import com.quantipixels.gbeewa.ResultStore
+
+@Composable
+fun App() {
+    val resultStore = retain { ResultStore() }
+    val resultConsumer = remember(resultStore) { ResultConsumer(resultStore) }
+
+    CompositionLocalProvider(LocalResultConsumer provides resultConsumer) {
+        AppNavigation(resultStore)
+    }
+}
+```
+
+On Android, Compose installs a lifecycle-aware retained-values store at the composition root. It keeps `resultStore` in memory when an activity is recreated for a configuration change. Use a `ViewModel` when the store belongs to an app-owned lifecycle outside composition. Neither option restores pending results after process death.
 
 ## Receive a result
 
