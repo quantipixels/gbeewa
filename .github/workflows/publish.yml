@@ -98,4 +98,4 @@ jobs:
           ORG_GRADLE_PROJECT_signingInMemoryKey: ${{ secrets.SIGNING_KEY }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyId: ${{ secrets.SIGNING_KEY_ID }}
           ORG_GRADLE_PROJECT_signingInMemoryKeyPassword: ${{ secrets.SIGNING_KEY_PASSWORD }}
-        run: ./gradlew publishAllPublicationsToMavenCentralRepository -PVERSION_NAME=${{ steps.version.outputs.value }} --stacktrace
+        run: ./gradlew publishAndReleaseToMavenCentral -PVERSION_NAME=${{ steps.version.outputs.value }} --stacktrace
