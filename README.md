@@ -16,6 +16,10 @@ Quanti Pixels authors, maintains, and publishes this library. The library origin
 
 Version `0.1.0` supports Android and iOS. Future platform targets are added by request.
 
+## Demo
+
+https://github.com/user-attachments/assets/91bba794-1b87-497d-a1cd-9e5c4fc329f2
+
 ## Why Gbéewá
 
 - **Omni-directional delivery:** Deliver current-to-previous, current-to-next, or current-to-current. Shared store ownership, key equality, and consumption timing select the receiver.
