@@ -170,7 +170,8 @@ The showcase iOS application targets iOS 17.2. This value is the host applicatio
 | --- | --- |
 | `ResultKey<T>` | Defines a typed result lane. Key equality defines lane identity. |
 | `ResultStore` | Publishes and retains the latest pending value for each equal key. |
-| `ResultConsumer` | Provides consume-only access to a store. |
+| `ResultConsumer` | Provides callback and direct consume-only access to a store. |
+| `PendingResult<T>` | Distinguishes a removed value from a missing pending result. |
 | `LocalResultConsumer` | Provides a consumer to Compose descendants. |
 | `ResultEffect` | Consumes one pending result in a non-suspending callback. |
 | `rememberResultAsState` | Converts delivered results into read-only Compose state. |
@@ -295,6 +296,28 @@ The route can pass ordinary values and callbacks to its screen content. The scre
 
 The handler is not a suspend function. Keep it quick. Update state directly, or launch longer work in a caller-owned scope that has the correct lifecycle and error policy.
 
+Use direct consumption when an event handler, effect, or non-Compose function needs the removed
+value as an expression:
+
+```kotlin
+import com.quantipixels.gbeewa.PendingResult
+import com.quantipixels.gbeewa.ResultConsumer
+
+fun openSelectedCountry(
+    resultConsumer: ResultConsumer,
+    openCountry: (String) -> Unit,
+) {
+    when (val result = resultConsumer.consume(SelectedCountryKey)) {
+        PendingResult.Missing -> Unit
+        is PendingResult.Value -> openCountry(result.value)
+    }
+}
+```
+
+Direct consumption removes the pending result before it returns. Do not call it during composition
+because removal changes observable Compose state. Use `ResultEffect`, `rememberResultAsState`, or
+`rememberSaveableResultAsState` for composition-owned delivery.
+
 Use `rememberResultAsState` when the result directly updates local Compose state. The `AsState` suffix distinguishes the returned `State<T>` from the root-owned `ResultStore`. Extra remember keys reset the initial value when their context changes:
 
 ```kotlin
@@ -388,11 +411,14 @@ resultStore.put(OptionalNoteKey, null)
 ```
 
 Presence is stored separately from the value. A pending `null` is delivered once. It is not treated as no result.
+Direct consumption returns `PendingResult.Value(null)`. It returns `PendingResult.Missing` only when
+the key has no pending result.
 
 ## Delivery contract
 
 - The store keeps only the latest pending value for each equal key.
 - Consumption removes the value before the handler runs.
+- Direct consumption returns `PendingResult.Value` after removal, or `PendingResult.Missing` when no value exists.
 - One result is consumed at most once, including when multiple effects compete for one key.
 - A handler failure does not restore the result.
 - A handler must not publish another value for its own key. That value can remain pending until the effect leaves and re-enters composition.

@@ -17,6 +17,62 @@ class ResultStoreTest {
     private data class RequestKey(val requestId: String) : ResultKey<String>
 
     @Test
+    fun `direct consumption returns a pending result once`() {
+        val store = ResultStore()
+        val consumer = ResultConsumer(store)
+
+        assertEquals(PendingResult.Missing, consumer.consume(CountryKey))
+
+        store.put(CountryKey, "NG")
+
+        assertEquals(PendingResult.Value("NG"), consumer.consume(CountryKey))
+        assertFalse(CountryKey in consumer)
+        assertEquals(PendingResult.Missing, consumer.consume(CountryKey))
+    }
+
+    @Test
+    fun `direct consumption distinguishes a nullable value from a missing result`() {
+        val store = ResultStore()
+        val consumer = ResultConsumer(store)
+
+        store.put(NullableKey, null)
+
+        assertEquals(PendingResult.Value(null), consumer.consume(NullableKey))
+        assertEquals(PendingResult.Missing, consumer.consume(NullableKey))
+    }
+
+    @Test
+    fun `direct consumption returns the latest result for the same key`() {
+        val store = ResultStore()
+        val consumer = ResultConsumer(store)
+
+        store.put(IndexKey, 1)
+        store.put(IndexKey, 2)
+
+        assertEquals(PendingResult.Value(2), consumer.consume(IndexKey))
+    }
+
+    @Test
+    fun `callback and direct consumers compete for one pending result`() {
+        val store = ResultStore()
+        val callbackConsumer = ResultConsumer(store)
+        val directConsumer = ResultConsumer(store)
+        val delivered = mutableListOf<String>()
+
+        store.put(CountryKey, "callback")
+        callbackConsumer.consume(CountryKey, delivered::add)
+
+        assertEquals(PendingResult.Missing, directConsumer.consume(CountryKey))
+        assertEquals(listOf("callback"), delivered)
+
+        store.put(CountryKey, "direct")
+
+        assertEquals(PendingResult.Value("direct"), directConsumer.consume(CountryKey))
+        callbackConsumer.consume(CountryKey, delivered::add)
+        assertEquals(listOf("callback"), delivered)
+    }
+
+    @Test
     fun `consumer delivers a pending result once`() {
         val state = ResultStore()
         val consumer = ResultConsumer(state)

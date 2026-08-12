@@ -1,3 +1,26 @@
+public abstract interface class com/quantipixels/gbeewa/PendingResult {
+}
+
+public final class com/quantipixels/gbeewa/PendingResult$Missing : com/quantipixels/gbeewa/PendingResult {
+	public static final field $stable I
+	public static final field INSTANCE Lcom/quantipixels/gbeewa/PendingResult$Missing;
+	public fun equals (Ljava/lang/Object;)Z
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class com/quantipixels/gbeewa/PendingResult$Value : com/quantipixels/gbeewa/PendingResult {
+	public static final field $stable I
+	public fun <init> (Ljava/lang/Object;)V
+	public final fun component1 ()Ljava/lang/Object;
+	public final fun copy (Ljava/lang/Object;)Lcom/quantipixels/gbeewa/PendingResult$Value;
+	public static synthetic fun copy$default (Lcom/quantipixels/gbeewa/PendingResult$Value;Ljava/lang/Object;ILjava/lang/Object;)Lcom/quantipixels/gbeewa/PendingResult$Value;
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()Ljava/lang/Object;
+	public fun hashCode ()I
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class com/quantipixels/gbeewa/RememberResultAsStateKt {
 	public static final fun rememberResultAsState (Lcom/quantipixels/gbeewa/ResultKey;[Ljava/lang/Object;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
 	public static final fun rememberSaveableResultAsState (Lcom/quantipixels/gbeewa/ResultKey;[Ljava/lang/Object;Landroidx/compose/runtime/saveable/Saver;Lkotlin/jvm/functions/Function0;Landroidx/compose/runtime/Composer;I)Landroidx/compose/runtime/State;
@@ -7,6 +30,7 @@ public final class com/quantipixels/gbeewa/RememberResultAsStateKt {
 public final class com/quantipixels/gbeewa/ResultConsumer {
 	public static final field $stable I
 	public fun <init> (Lcom/quantipixels/gbeewa/ResultStore;)V
+	public final fun consume (Lcom/quantipixels/gbeewa/ResultKey;)Lcom/quantipixels/gbeewa/PendingResult;
 	public final fun consume (Lcom/quantipixels/gbeewa/ResultKey;Lkotlin/jvm/functions/Function1;)V
 	public final fun contains (Lcom/quantipixels/gbeewa/ResultKey;)Z
 }

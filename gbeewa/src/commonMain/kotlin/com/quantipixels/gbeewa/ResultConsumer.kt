@@ -19,6 +19,20 @@ public class ResultConsumer public constructor(
     public operator fun contains(key: ResultKey<*>): Boolean = key in store
 
     /**
+     * Removes and returns the pending result for [key].
+     *
+     * This function returns [PendingResult.Missing] when the key has no pending result. A present
+     * nullable result returns [PendingResult.Value] whose value is `null`.
+     *
+     * Direct consumption is intended for event handlers, effects, and non-Compose code. Do not
+     * call it during composition because removal changes observable Compose state.
+     *
+     * @param key the typed result lane to consume.
+     * @return the removed value or [PendingResult.Missing].
+     */
+    public fun <T> consume(key: ResultKey<T>): PendingResult<T> = store.remove(key)
+
+    /**
      * Removes and delivers the pending result for [key].
      *
      * This function does nothing when the key has no pending result. It removes a present result
@@ -30,6 +44,10 @@ public class ResultConsumer public constructor(
      * @param key the typed result lane to consume.
      * @param onResult the non-suspending callback that receives a present result.
      */
-    public fun <T> consume(key: ResultKey<T>, onResult: (T) -> Unit): Unit =
-        store.remove(key, onResult)
+    public fun <T> consume(key: ResultKey<T>, onResult: (T) -> Unit) {
+        when (val result = consume(key)) {
+            PendingResult.Missing -> Unit
+            is PendingResult.Value -> onResult(result.value)
+        }
+    }
 }

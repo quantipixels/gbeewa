@@ -8,9 +8,31 @@
 // Library unique name: <com.quantipixels:gbeewa>
 abstract interface <#A: kotlin/Any?> com.quantipixels.gbeewa/ResultKey // com.quantipixels.gbeewa/ResultKey|null[0]
 
+sealed interface <#A: out kotlin/Any?> com.quantipixels.gbeewa/PendingResult { // com.quantipixels.gbeewa/PendingResult|null[0]
+    final class <#A1: out kotlin/Any?> Value : com.quantipixels.gbeewa/PendingResult<#A1> { // com.quantipixels.gbeewa/PendingResult.Value|null[0]
+        constructor <init>(#A1) // com.quantipixels.gbeewa/PendingResult.Value.<init>|<init>(1:0){}[0]
+
+        final val value // com.quantipixels.gbeewa/PendingResult.Value.value|{}value[0]
+            final fun <get-value>(): #A1 // com.quantipixels.gbeewa/PendingResult.Value.value.<get-value>|<get-value>(){}[0]
+
+        final fun component1(): #A1 // com.quantipixels.gbeewa/PendingResult.Value.component1|component1(){}[0]
+        final fun copy(#A1 = ...): com.quantipixels.gbeewa/PendingResult.Value<#A1> // com.quantipixels.gbeewa/PendingResult.Value.copy|copy(1:0){}[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.quantipixels.gbeewa/PendingResult.Value.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.quantipixels.gbeewa/PendingResult.Value.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.quantipixels.gbeewa/PendingResult.Value.toString|toString(){}[0]
+    }
+
+    final object Missing : com.quantipixels.gbeewa/PendingResult<kotlin/Nothing> { // com.quantipixels.gbeewa/PendingResult.Missing|null[0]
+        final fun equals(kotlin/Any?): kotlin/Boolean // com.quantipixels.gbeewa/PendingResult.Missing.equals|equals(kotlin.Any?){}[0]
+        final fun hashCode(): kotlin/Int // com.quantipixels.gbeewa/PendingResult.Missing.hashCode|hashCode(){}[0]
+        final fun toString(): kotlin/String // com.quantipixels.gbeewa/PendingResult.Missing.toString|toString(){}[0]
+    }
+}
+
 final class com.quantipixels.gbeewa/ResultConsumer { // com.quantipixels.gbeewa/ResultConsumer|null[0]
     constructor <init>(com.quantipixels.gbeewa/ResultStore) // com.quantipixels.gbeewa/ResultConsumer.<init>|<init>(com.quantipixels.gbeewa.ResultStore){}[0]
 
+    final fun <#A1: kotlin/Any?> consume(com.quantipixels.gbeewa/ResultKey<#A1>): com.quantipixels.gbeewa/PendingResult<#A1> // com.quantipixels.gbeewa/ResultConsumer.consume|consume(com.quantipixels.gbeewa.ResultKey<0:0>){0§<kotlin.Any?>}[0]
     final fun <#A1: kotlin/Any?> consume(com.quantipixels.gbeewa/ResultKey<#A1>, kotlin/Function1<#A1, kotlin/Unit>) // com.quantipixels.gbeewa/ResultConsumer.consume|consume(com.quantipixels.gbeewa.ResultKey<0:0>;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
     final fun contains(com.quantipixels.gbeewa/ResultKey<*>): kotlin/Boolean // com.quantipixels.gbeewa/ResultConsumer.contains|contains(com.quantipixels.gbeewa.ResultKey<*>){}[0]
 }
@@ -24,6 +46,8 @@ final class com.quantipixels.gbeewa/ResultStore { // com.quantipixels.gbeewa/Res
 
 final val com.quantipixels.gbeewa/LocalResultConsumer // com.quantipixels.gbeewa/LocalResultConsumer|{}LocalResultConsumer[0]
     final fun <get-LocalResultConsumer>(): androidx.compose.runtime/ProvidableCompositionLocal<com.quantipixels.gbeewa/ResultConsumer> // com.quantipixels.gbeewa/LocalResultConsumer.<get-LocalResultConsumer>|<get-LocalResultConsumer>(){}[0]
+final val com.quantipixels.gbeewa/com_quantipixels_gbeewa_PendingResult_Missing$stableprop // com.quantipixels.gbeewa/com_quantipixels_gbeewa_PendingResult_Missing$stableprop|#static{}com_quantipixels_gbeewa_PendingResult_Missing$stableprop[0]
+final val com.quantipixels.gbeewa/com_quantipixels_gbeewa_PendingResult_Value$stableprop // com.quantipixels.gbeewa/com_quantipixels_gbeewa_PendingResult_Value$stableprop|#static{}com_quantipixels_gbeewa_PendingResult_Value$stableprop[0]
 final val com.quantipixels.gbeewa/com_quantipixels_gbeewa_ResultConsumer$stableprop // com.quantipixels.gbeewa/com_quantipixels_gbeewa_ResultConsumer$stableprop|#static{}com_quantipixels_gbeewa_ResultConsumer$stableprop[0]
 final val com.quantipixels.gbeewa/com_quantipixels_gbeewa_ResultStore$stableprop // com.quantipixels.gbeewa/com_quantipixels_gbeewa_ResultStore$stableprop|#static{}com_quantipixels_gbeewa_ResultStore$stableprop[0]
 
@@ -31,5 +55,7 @@ final fun <#A: kotlin/Any?> com.quantipixels.gbeewa/ResultEffect(com.quantipixel
 final fun <#A: kotlin/Any?> com.quantipixels.gbeewa/rememberResultAsState(com.quantipixels.gbeewa/ResultKey<#A>, kotlin/Array<out kotlin/Any?>..., kotlin/Function0<#A>, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<#A> // com.quantipixels.gbeewa/rememberResultAsState|rememberResultAsState(com.quantipixels.gbeewa.ResultKey<0:0>;kotlin.Array<out|kotlin.Any?>...;kotlin.Function0<0:0>;androidx.compose.runtime.Composer?;kotlin.Int){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> com.quantipixels.gbeewa/rememberSaveableResultAsState(com.quantipixels.gbeewa/ResultKey<#A>, kotlin/Array<out kotlin/Any?>..., androidx.compose.runtime.saveable/Saver<#A, out kotlin/Any>, kotlin/Function0<#A>, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<#A> // com.quantipixels.gbeewa/rememberSaveableResultAsState|rememberSaveableResultAsState(com.quantipixels.gbeewa.ResultKey<0:0>;kotlin.Array<out|kotlin.Any?>...;androidx.compose.runtime.saveable.Saver<0:0,out|kotlin.Any>;kotlin.Function0<0:0>;androidx.compose.runtime.Composer?;kotlin.Int){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> com.quantipixels.gbeewa/rememberSaveableResultAsState(com.quantipixels.gbeewa/ResultKey<#A>, kotlin/Array<out kotlin/Any?>..., kotlin/Function0<#A>, androidx.compose.runtime/Composer?, kotlin/Int): androidx.compose.runtime/State<#A> // com.quantipixels.gbeewa/rememberSaveableResultAsState|rememberSaveableResultAsState(com.quantipixels.gbeewa.ResultKey<0:0>;kotlin.Array<out|kotlin.Any?>...;kotlin.Function0<0:0>;androidx.compose.runtime.Composer?;kotlin.Int){0§<kotlin.Any?>}[0]
+final fun com.quantipixels.gbeewa/com_quantipixels_gbeewa_PendingResult_Missing$stableprop_getter(): kotlin/Int // com.quantipixels.gbeewa/com_quantipixels_gbeewa_PendingResult_Missing$stableprop_getter|com_quantipixels_gbeewa_PendingResult_Missing$stableprop_getter(){}[0]
+final fun com.quantipixels.gbeewa/com_quantipixels_gbeewa_PendingResult_Value$stableprop_getter(): kotlin/Int // com.quantipixels.gbeewa/com_quantipixels_gbeewa_PendingResult_Value$stableprop_getter|com_quantipixels_gbeewa_PendingResult_Value$stableprop_getter(){}[0]
 final fun com.quantipixels.gbeewa/com_quantipixels_gbeewa_ResultConsumer$stableprop_getter(): kotlin/Int // com.quantipixels.gbeewa/com_quantipixels_gbeewa_ResultConsumer$stableprop_getter|com_quantipixels_gbeewa_ResultConsumer$stableprop_getter(){}[0]
 final fun com.quantipixels.gbeewa/com_quantipixels_gbeewa_ResultStore$stableprop_getter(): kotlin/Int // com.quantipixels.gbeewa/com_quantipixels_gbeewa_ResultStore$stableprop_getter|com_quantipixels_gbeewa_ResultStore$stableprop_getter(){}[0]
