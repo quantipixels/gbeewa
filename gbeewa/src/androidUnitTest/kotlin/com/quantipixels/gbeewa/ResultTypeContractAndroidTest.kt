@@ -22,4 +22,22 @@ class ResultTypeContractAndroidTest {
 
         assertFalse(StringKey in consumer)
     }
+
+    @Test
+    fun `direct typed contract bypass fails on value access after removal`() {
+        val store = ResultStore()
+        val consumer = ResultConsumer(store)
+        @Suppress("UNCHECKED_CAST")
+        val bypassedKey = StringKey as ResultKey<Int>
+        store.put(bypassedKey, 7)
+
+        val result = consumer.consume(StringKey)
+
+        assertFailsWith<ClassCastException> {
+            @Suppress("UNCHECKED_CAST")
+            val value = (result as PendingResult.Value<String>).value
+            value.length
+        }
+        assertFalse(StringKey in consumer)
+    }
 }

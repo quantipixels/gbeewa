@@ -38,11 +38,11 @@ public class ResultStore public constructor() {
      */
     public operator fun contains(key: ResultKey<*>): Boolean = key in pendingResults
 
-    internal fun <T> remove(key: ResultKey<T>, onResult: (T) -> Unit) {
-        if (key !in pendingResults) return
+    internal fun <T> remove(key: ResultKey<T>): PendingResult<T> {
+        if (key !in pendingResults) return PendingResult.Missing
 
         @Suppress("UNCHECKED_CAST")
         val result = pendingResults.remove(key) as T
-        onResult(result)
+        return PendingResult.Value(result)
     }
 }
