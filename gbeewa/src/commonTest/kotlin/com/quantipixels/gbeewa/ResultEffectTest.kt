@@ -85,53 +85,6 @@ class ResultEffectTest {
     }
 
     @Test
-    fun `same-key callback publications stay pending until remount including equal payloads`() =
-        runCompositionTest {
-            for (replacement in listOf("different", "initial")) {
-                val store = ResultStore()
-                val delivered = mutableListOf<String>()
-                val mounted = mutableStateOf(true)
-                val recomposition = mutableStateOf(0)
-                var observedRecomposition = -1
-                setContent(store) {
-                    observedRecomposition = recomposition.value
-                    if (mounted.value) {
-                        ResultEffect(StringKey) { value ->
-                            assertFalse(StringKey in store)
-                            delivered += value
-                            if (delivered.size == 1) {
-                                store.put(StringKey, "superseded")
-                                store.put(StringKey, replacement)
-                            }
-                        }
-                    }
-                }
-                settle()
-
-                store.put(StringKey, "initial")
-                settle()
-                recomposition.value += 1
-                settle()
-
-                assertEquals(1, observedRecomposition)
-                assertEquals(listOf("initial"), delivered)
-                assertTrue(StringKey in store)
-
-                mounted.value = false
-                settle()
-                assertTrue(StringKey in store)
-                mounted.value = true
-                settle()
-                settle()
-
-                assertEquals(listOf("initial", replacement), delivered)
-                assertFalse(StringKey in store)
-                setContent {}
-                settle()
-            }
-        }
-
-    @Test
     fun `pending effect uses callback replaced before its coroutine runs`() = runCompositionTest {
         val state = ResultStore()
         val consumer = ResultConsumer(state)

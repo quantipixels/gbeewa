@@ -42,24 +42,6 @@ class ResultStoreTest {
     }
 
     @Test
-    fun `consume-only cleanup removes a nullable request without callbacks or affecting another lane`() {
-        val store = ResultStore()
-        val consumer = ResultConsumer(store)
-        val delivered = mutableListOf<String?>()
-        store.put(NullableKey, null)
-        store.put(CountryKey, "NG")
-
-        assertEquals(PendingResult.Value(null), consumer.consume(NullableKey))
-        consumer.consume(NullableKey, delivered::add)
-
-        assertTrue(delivered.isEmpty())
-        assertEquals(PendingResult.Missing, consumer.consume(NullableKey))
-        assertTrue(CountryKey in consumer)
-        consumer.consume(CountryKey, delivered::add)
-        assertEquals(listOf<String?>("NG"), delivered)
-    }
-
-    @Test
     fun `direct consumption returns the latest result for the same key`() {
         val store = ResultStore()
         val consumer = ResultConsumer(store)

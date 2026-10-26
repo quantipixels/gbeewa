@@ -485,16 +485,10 @@ the key has no pending result.
 
 ### Same-key publication inside a callback
 
-Keep the restriction against publishing for the same key inside its result callback. The focused
-Compose runtime experiment in `ResultEffectTest` republishes both a different payload and an equal
-payload while the receiver stays mounted. In each case, the replacement stays pending through
-recomposition and is delivered after the receiver leaves and re-enters composition. Publishing
-twice in the callback retains only the latest pending value. Removal still happens before each
-callback, and competing consumers still share one pending result.
-
-This characterizes the documented limitation; it adds no queue, automatic redelivery, or retry
-guarantee. Support for callback republishing would change observable behavior and needs a separate
-decision.
+Do not publish another value for the same key from inside its result callback. The replacement,
+including an equal payload, can remain pending until the receiver leaves and re-enters composition.
+Publishing twice retains only the latest pending value. There is no queue, automatic redelivery,
+or retry guarantee.
 
 ## Contributing
 

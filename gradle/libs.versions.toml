@@ -15,10 +15,6 @@ activity-compose = "1.10.1"
 vanniktech-maven-publish = "0.35.0"
 
 [libraries]
-verification-compose-test = { module = "androidx.compose.ui:ui-test-junit4", version = "1.8.2" }
-verification-compose-manifest = { module = "androidx.compose.ui:ui-test-manifest", version = "1.8.2" }
-verification-test-runner = { module = "androidx.test:runner", version = "1.6.2" }
-verification-test-core = { module = "androidx.test:core", version = "1.6.1" }
 decompose = { module = "com.arkivanov.decompose:decompose", version.ref = "decompose" }
 decompose-compose = { module = "com.arkivanov.decompose:extensions-compose", version.ref = "decompose" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }

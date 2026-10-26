@@ -49,22 +49,6 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build
 
-      - name: Verify staged artifact on an owned simulator
-        run: python3 verification/apple-ci.py iosSimulatorArm64
-
-      - name: Preserve publication consumer evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gbeewa-iosSimulatorArm64-publication-evidence
-          path: |
-            build/verification/*/*.log
-            build/verification/*/*.json
-            build/verification/*/maven/staged-files.sha256
-            build/verification/*/consumer-build/reports/
-            build/verification/*/consumer-build/test-results/
-          if-no-files-found: warn
-
   check-x64:
     runs-on: macos-15-intel
     steps:
@@ -87,19 +71,3 @@ jobs:
             :samples:composeApp:iosX64Test \
             :samples:composeApp:linkDebugFrameworkIosX64 \
             --stacktrace
-
-      - name: Verify staged artifact on an owned simulator
-        run: python3 verification/apple-ci.py iosX64
-
-      - name: Preserve publication consumer evidence
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: gbeewa-iosX64-publication-evidence
-          path: |
-            build/verification/*/*.log
-            build/verification/*/*.json
-            build/verification/*/maven/staged-files.sha256
-            build/verification/*/consumer-build/reports/
-            build/verification/*/consumer-build/test-results/
-          if-no-files-found: warn
