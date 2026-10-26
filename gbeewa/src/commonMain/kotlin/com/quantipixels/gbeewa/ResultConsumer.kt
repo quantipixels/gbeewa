@@ -27,6 +27,11 @@ public class ResultConsumer public constructor(
      * Direct consumption is intended for event handlers, effects, and non-Compose code. Do not
      * call it during composition because removal changes observable Compose state.
      *
+     * To clean up an abandoned request, call this overload and ignore its return value. It removes
+     * only this key's pending result and invokes no callback. It does not prevent a later producer
+     * from publishing another result. Consume on the UI or main context that drives Compose
+     * consumption; the store does not switch contexts or synchronize concurrent access.
+     *
      * @param key the typed result lane to consume.
      * @return the removed value or [PendingResult.Missing].
      */

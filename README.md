@@ -177,6 +177,16 @@ The showcase iOS application targets iOS 17.2. This value is the host applicatio
 | `rememberResultAsState` | Converts delivered results into read-only Compose state. |
 | `rememberSaveableResultAsState` | Converts delivered results into read-only saveable Compose state with automatic or custom saving. |
 
+Read the contracts in order: [key identity](gbeewa/src/commonMain/kotlin/com/quantipixels/gbeewa/ResultKey.kt)
+→ [store lifetime](gbeewa/src/commonMain/kotlin/com/quantipixels/gbeewa/ResultStore.kt)
+and [presence](gbeewa/src/commonMain/kotlin/com/quantipixels/gbeewa/PendingResult.kt)
+→ [consumer](gbeewa/src/commonMain/kotlin/com/quantipixels/gbeewa/ResultConsumer.kt)
+→ [effect](gbeewa/src/commonMain/kotlin/com/quantipixels/gbeewa/ResultEffect.kt)
+→ [state helpers](gbeewa/src/commonMain/kotlin/com/quantipixels/gbeewa/RememberResultAsState.kt).
+The focused [store tests](gbeewa/src/commonTest/kotlin/com/quantipixels/gbeewa/ResultStoreTest.kt)
+and [Compose runtime tests](gbeewa/src/commonTest/kotlin/com/quantipixels/gbeewa/ResultEffectTest.kt)
+show these contracts in use.
+
 ## Define a typed key
 
 Key equality defines the result lane. An object is suitable for one shared lane. A data class is suitable when an identifier is part of the lane.
@@ -193,6 +203,20 @@ The key type controls the payload type at normal call sites.
 ## Choose store ownership and exposure
 
 Create one `ResultStore` at the application or navigation root. Keep it for the communication lifetime that the app needs. Gbéewá does not require the store to be exposed to screen content.
+
+### Transient handoffs and restored navigation
+
+`ResultStore` lives in memory and is not serialized or restored. Restoring a navigation destination
+does not restore its pending result. If a destination requires a transient handoff, choose its
+missing-value recovery before starting dependent work. For example, return to an earlier step or
+close the destination when the handoff is missing. Check and consume the handoff in an event
+handler, effect, or app-owned entry boundary, never during composition or in a `remember` initializer.
+Save durable identifiers through the app's own navigation or storage contract.
+
+`rememberSaveableResultAsState` saves a receiver's UI value, not a pending handoff. Restoring that
+value does not establish that a new result was delivered.
+
+### Store exposure
 
 The app chooses how far each capability travels:
 
@@ -318,6 +342,37 @@ Direct consumption removes the pending result before it returns. Do not call it 
 because removal changes observable Compose state. Use `ResultEffect`, `rememberResultAsState`, or
 `rememberSaveableResultAsState` for composition-owned delivery.
 
+### Cancel or abandon a request
+
+Use the existing `ResultConsumer.consume(key)` overload to remove a retired request's pending
+value without invoking a result callback. Cleanup affects only that key, so other requests keep
+their pending values. Run it on the UI or main context that drives Compose consumption, such as
+the Cancel event handler:
+
+```kotlin
+import com.quantipixels.gbeewa.ResultConsumer
+import com.quantipixels.gbeewa.ResultKey
+
+data class EditNoteKey(val requestId: String) : ResultKey<String?>
+
+fun cancelNoteEdit(
+    consumer: ResultConsumer,
+    key: EditNoteKey,
+    dismiss: () -> Unit,
+) {
+    consumer.consume(key)
+    dismiss()
+}
+```
+
+The return value can be ignored for cleanup. If it matters, `PendingResult.Value(null)` means a
+present nullable value was removed; `PendingResult.Missing` means no pending value existed.
+Cleanup does not cancel the producer or reject later publications. The app must stop or ignore
+late producer callbacks for a retired request and use distinct keys for overlapping requests.
+No discard API, registry, session manager, or navigation policy is needed for this cleanup.
+
+### Receive as state
+
 Use `rememberResultAsState` when the result directly updates local Compose state. The `AsState` suffix distinguishes the returned `State<T>` from the root-owned `ResultStore`. Extra remember keys reset the initial value when their context changes:
 
 ```kotlin
@@ -427,6 +482,19 @@ the key has no pending result.
 - The root owner discards pending results when it discards the `ResultStore`.
 - The saveable helper can restore a receiver's delivered UI value. It does not restore pending results.
 - Any app layer can own the store or call `put`, including a `ViewModel` or navigation component. The call must execute on the UI or main context that drives Compose consumption. The library does not switch contexts or synchronize concurrent access.
+
+### Same-key publication inside a callback
+
+Keep the restriction against publishing for the same key inside its result callback. The focused
+Compose runtime experiment in `ResultEffectTest` republishes both a different payload and an equal
+payload while the receiver stays mounted. In each case, the replacement stays pending through
+recomposition and is delivered after the receiver leaves and re-enters composition. Publishing
+twice in the callback retains only the latest pending value. Removal still happens before each
+callback, and competing consumers still share one pending result.
+
+This characterizes the documented limitation; it adds no queue, automatic redelivery, or retry
+guarantee. Support for callback republishing would change observable behavior and needs a separate
+decision.
 
 ## Contributing
 
