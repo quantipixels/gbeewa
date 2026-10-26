@@ -8,11 +8,13 @@ import androidx.compose.runtime.mutableStateMapOf
  *
  * The owner publishes results through [put]. The store retains each value until a
  * [ResultConsumer] consumes it, a later value replaces it, or the owner discards this store.
- * The store does not address a screen or inspect navigation direction. A consumer backed by this
- * store can consume an equal key on the current screen or on a screen reached after a pop, push,
- * replacement, or other navigation change. Any application layer can call [put], but the call
- * must execute on the UI or main context that drives Compose consumption. This store does not
- * switch contexts or synchronize concurrent access.
+ * This store lives in memory and is not serialized or restored. Restoring navigation does not
+ * restore pending results. If a destination requires a transient handoff, the caller must choose
+ * how to recover from a missing result before starting work that depends on it.
+ *
+ * Shared store ownership, equal keys, and consumption timing select the receiver; navigation
+ * direction does not. Publish and consume on the UI or main context that drives Compose
+ * consumption. This store does not switch contexts or synchronize concurrent access.
  */
 @Stable
 public class ResultStore public constructor() {

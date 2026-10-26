@@ -38,6 +38,8 @@ public val LocalResultConsumer: ProvidableCompositionLocal<ResultConsumer> =
  *
  * Do not publish another value for [key] from inside [onResult]. The current keyed effect has
  * completed, so that value can remain pending until this effect leaves and re-enters composition.
+ * This includes a payload equal to the consumed value; callback republishing has no automatic
+ * redelivery or retry guarantee.
  *
  * @param key the typed result lane to observe.
  * @param onResult the latest callback that receives a pending result.
